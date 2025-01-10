@@ -1,29 +1,35 @@
-<div class="min-h-screen bg-gray-100">
-  <nav class="bg-white shadow-lg">
-    <div class="max-w-7xl mx-auto px-4">
-      <div class="flex justify-between h-16">
-        <div class="flex">
-          <div class="flex-shrink-0 flex items-center">
-            <h1 class="text-xl font-bold">MusicStream</h1>
-          </div>
-          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <button routerLink="/library" 
-               routerLinkActive="text-blue-500"
-               class="inline-flex items-center px-1 pt-1 text-gray-900">
-              Bibliothèque
-            </button>
-            <button routerLink="/add-track"
-               routerLinkActive="text-blue-500"
-               class="inline-flex items-center px-1 pt-1 text-gray-900">
-              Ajouter une piste
-            </button>
-          </div>
-        </div>
+<div class="flex h-screen bg-black">
+  <!-- Sidebar avec le style Spotify -->
+  <nav class="w-64 bg-black text-gray-300 flex flex-col">
+    <!-- Logo -->
+    <div class="p-6">
+      <div class="text-2xl font-bold text-spotify-green">MusicStreams</div>
+    </div>
+    
+    <!-- Navigation principale -->
+    <div class="flex-1 px-2">
+      <div class="space-y-2">
+        <a routerLink="/library" 
+           routerLinkActive="text-spotify-green"
+           class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:text-white transition-colors">
+          <mat-icon class="mr-3">library_music</mat-icon>
+          <span>Bibliothèque</span>
+        </a>
+        
+        <a routerLink="/add-track"
+           routerLinkActive="text-spotify-green"
+           class="flex items-center px-4 py-2 text-sm font-medium rounded-md hover:text-white transition-colors">
+           <mat-icon class="mr-3">add_circle</mat-icon>
+           <span>Ajouter une chanson</span>
+        </a>
       </div>
     </div>
   </nav>
 
-  <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <router-outlet></router-outlet>
+  <!-- Contenu principal -->
+  <main class=" p-6 bg-gradient-to-b from-gray-900 to-black min-h-screen flex-1 overflow-y-auto ">
+    <div class="px-8 py-6">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

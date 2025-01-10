@@ -1,0 +1,33 @@
+/* Style pour les liens de la barre latérale */
+nav a {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  color: #b3b3b3;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s, box-shadow 0.3s;
+  border-radius: 5px;
+}
+
+nav a:hover {
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style pour les icônes */
+mat-icon {
+  font-size: 24px;
+  margin-right: 10px;
+  transition: transform 0.3s, color 0.3s;
+}
+
+nav a:hover mat-icon {
+  transform: rotate(20deg);
+  color: #1db954;
+}
+
+/* Style pour le contenu principal */
+
+
+
