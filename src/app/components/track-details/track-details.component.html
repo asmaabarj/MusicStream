@@ -1,1 +1,72 @@
-<p>track-details works!</p>
+<div class="p-4 max-w-2xl mx-auto" *ngIf="track$ | async as track">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="flex items-center mb-4">
+      <img [src]="track.coverUrl || 'assets/default-cover.png'" 
+           alt="Cover" 
+           class="w-24 h-24 object-cover rounded mr-4">
+      <div>
+        <h1 class="text-2xl font-bold">{{ track.title }}</h1>
+        <p class="text-gray-600">{{ track.artist }}</p>
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <p class="text-gray-700">{{ track.description }}</p>
+    </div>
+    
+    <div class="grid grid-cols-2 gap-4 text-sm">
+      <div>
+        <p class="text-gray-500">Catégorie</p>
+        <p class="font-medium">{{ track.category }}</p>
+      </div>
+      <div>
+        <p class="text-gray-500">Date d'ajout</p>
+        <p class="font-medium">{{ track.addedDate | date }}</p>
+      </div>
+      <div>
+        <p class="text-gray-500">Durée</p>
+        <p class="font-medium">{{ track.duration | number:'1.0-0' }} secondes</p>
+      </div>
+    </div>
+
+    <!-- Lecteur audio personnalisé -->
+    <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+      <div class="flex items-center justify-between">
+        <button 
+          (click)="togglePlay()" 
+          class="p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
+          <svg *ngIf="!isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          </svg>
+          <svg *ngIf="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
+          </svg>
+        </button>
+
+        <!-- Barre de progression -->
+        <div class="flex-grow mx-4">
+          <input 
+            type="range" 
+            [value]="currentTime"
+            [max]="duration"
+            (input)="onSeek($event)"
+            class="w-full"
+          >
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>{{ currentTime | time }}</span>
+            <span>{{ duration | time }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audio element caché -->
+      <audio #audioPlayer 
+        [src]="audioUrl"
+        (timeupdate)="onTimeUpdate()"
+        (loadedmetadata)="onMetadataLoaded()"
+        (ended)="onEnded()">
+      </audio>
+    </div>
+  </div>
+</div>
+  

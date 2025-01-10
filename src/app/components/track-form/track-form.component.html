@@ -1,1 +1,31 @@
-<p>track-form works!</p>
+<form [formGroup]="trackForm" (ngSubmit)="submit()" class="p-4">
+  <div>
+    <label>Title</label>
+    <input formControlName="title" class="border p-2 rounded" />
+  </div>
+  <div>
+    <label>Artist</label>
+    <input formControlName="artist" class="border p-2 rounded" />
+  </div>
+  <div>
+    <label>Description</label>
+    <textarea formControlName="description" class="border p-2 rounded"></textarea>
+  </div>
+  <div>
+    <label>Category</label>
+    <select formControlName="category" class="border p-2 rounded">
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+  </div>
+  <div>
+    <label>Audio File</label>
+    <input type="file" (change)="onAudioFileChange($event)" accept=".mp3, .wav, .ogg" />
+  </div>
+  <div>
+    <label>Track Image</label>
+    <input type="file" (change)="onImageFileChange($event)" accept=".jpg, .jpeg, .png" />
+  </div>
+  <button type="submit" class="mt-4 bg-blue-500 text-white p-2 rounded">
+    Add Track
+  </button>
+</form>

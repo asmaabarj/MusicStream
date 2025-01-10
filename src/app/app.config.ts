@@ -5,7 +5,14 @@ import { routes } from './app.routes';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { trackReducer } from './store/reducers/track.reducer';
+import { TrackEffects } from './store/effects/track.effects';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), provideStore(), provideEffects(), provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })]
+  providers: [
+    provideRouter(routes),
+    provideStore({ track: trackReducer }),
+    provideEffects(TrackEffects),
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
+  ]
 };
