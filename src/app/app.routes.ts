@@ -8,5 +8,6 @@ export const routes: Routes = [
   { path: 'library', component: LibraryComponent },
   { path: 'add-track', component: TrackFormComponent },
   { path: 'track/:id', component: TrackDetailsComponent },
+  { path: 'edit-track/:id', component: TrackFormComponent },
   { path: '**', redirectTo: '/library' }
 ];

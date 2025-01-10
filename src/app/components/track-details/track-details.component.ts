@@ -55,8 +55,20 @@ export class TrackDetailsComponent implements OnInit {
     this.currentTime = Math.floor(this.audioPlayer.nativeElement.currentTime);
   }
 
-  onMetadataLoaded() {
+  async onMetadataLoaded() {
     this.duration = Math.floor(this.audioPlayer.nativeElement.duration);
+    
+    // Mettre à jour la durée dans la base de données
+    const trackId = this.route.snapshot.paramMap.get('id');
+    if (trackId) {
+      try {
+        const track = await this.trackService.getTrackById(trackId);
+        track.duration = this.duration;
+        await this.trackService.updateTrack(track);
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour de la durée:', error);
+      }
+    }
   }
 
   onSeek(event: Event) {

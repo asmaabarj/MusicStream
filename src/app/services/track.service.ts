@@ -144,4 +144,16 @@ export class TrackService {
       request.onerror = () => reject(request.error);
     });
   }
+
+  async updateTrack(track: Track): Promise<void> {
+    await this.ensureDBReady();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(this.metadataStore, 'readwrite');
+      const store = transaction.objectStore(this.metadataStore);
+      const request = store.put(track);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject();
+    });
+  }
 }

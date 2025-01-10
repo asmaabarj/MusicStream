@@ -7,12 +7,13 @@ import { selectAllTracks } from '../../store/selectors/track.selectors';
 import { Track } from '../../models/track.model';
 import { Observable } from 'rxjs';
 import { TrackService } from '../../services/track.service';
+import { TimePipe } from '../../pipes/time.pipe';
 
 @Component({
   selector: 'app-library',
   templateUrl: './library.component.html',
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, TimePipe]
 })
 export class LibraryComponent implements OnInit {
   tracks$: Observable<Track[]> = this.store.select(selectAllTracks);
