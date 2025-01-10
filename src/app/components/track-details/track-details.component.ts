@@ -58,7 +58,6 @@ export class TrackDetailsComponent implements OnInit {
   async onMetadataLoaded() {
     this.duration = Math.floor(this.audioPlayer.nativeElement.duration);
     
-    // Mettre à jour la durée dans la base de données
     const trackId = this.route.snapshot.paramMap.get('id');
     if (trackId) {
       try {
@@ -79,5 +78,12 @@ export class TrackDetailsComponent implements OnInit {
   onEnded() {
     this.isPlaying = false;
     this.currentTime = 0;
+  }
+
+  getCoverUrl(coverUrl: any): string {
+    if (coverUrl instanceof File) {
+      return URL.createObjectURL(coverUrl);
+    }
+    return coverUrl || 'assets/default-cover.png';
   }
 }

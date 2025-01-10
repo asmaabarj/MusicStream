@@ -5,6 +5,7 @@ export const selectTrackState = createFeatureSelector<TrackState>('track');
 
 export const selectAllTracks = createSelector(
   selectTrackState,
+  
   (state: TrackState) => state.tracks
 );
 

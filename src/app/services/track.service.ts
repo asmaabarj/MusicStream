@@ -8,11 +8,9 @@ export class TrackService {
   private dbName = 'MusicStreamDB';
   private metadataStore = 'tracks';
   private audioStore = 'audioFiles';
+  private coverStore = 'coverFiles';
   private db!: IDBDatabase;
 
-  constructor() {
-    this.initDB();
-  }
 
   private initDB(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -25,6 +23,9 @@ export class TrackService {
         }
         if (!this.db.objectStoreNames.contains(this.audioStore)) {
           this.db.createObjectStore(this.audioStore);
+        }
+        if (!this.db.objectStoreNames.contains(this.coverStore)) {
+          this.db.createObjectStore(this.coverStore);
         }
       };
 
@@ -51,10 +52,12 @@ export class TrackService {
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction(this.metadataStore, 'readwrite');
       const store = transaction.objectStore(this.metadataStore);
+      console.log(track);
       const request = store.add(track);
 
       request.onsuccess = () => resolve();
       request.onerror = () => reject();
+      console.log(request);
     });
   }
 
@@ -70,18 +73,32 @@ export class TrackService {
     });
   }
 
+async addTrackCover(id: string, file: File): Promise<void> {
+  await this.ensureDBReady();
+  return new Promise((resolve, reject) => {
+    const transaction = this.db.transaction(this.coverStore, 'readwrite');
+    const store = transaction.objectStore(this.coverStore);
+    const request = store.put(file, id);
+
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject();
+  });
+}
+
+
   async getAllTracks(): Promise<Track[]> {
     await this.ensureDBReady();
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction(this.metadataStore, 'readonly');
       const store = transaction.objectStore(this.metadataStore);
       const request = store.getAll();
-
       request.onsuccess = () => {
         const tracks = request.result;
-        console.log(tracks);
         resolve(tracks);
+        console.log(tracks);
+
       };
+
       request.onerror = () => reject(request.error);
     });
   }
@@ -89,13 +106,11 @@ export class TrackService {
   async deleteTrack(id: string): Promise<void> {
     await this.ensureDBReady();
     return new Promise((resolve, reject) => {
-      // Supprimer les métadonnées
       const metadataTransaction = this.db.transaction(this.metadataStore, 'readwrite');
       const metadataStore = metadataTransaction.objectStore(this.metadataStore);
       const metadataRequest = metadataStore.delete(id);
 
       metadataRequest.onsuccess = () => {
-        // Supprimer le fichier audio associé
         const audioTransaction = this.db.transaction(this.audioStore, 'readwrite');
         const audioStore = audioTransaction.objectStore(this.audioStore);
         const audioRequest = audioStore.delete(id);

@@ -1,8 +1,8 @@
 <div class="p-4 max-w-2xl mx-auto" *ngIf="track$ | async as track">
   <div class="bg-white rounded-lg shadow-lg p-6">
     <div class="flex items-center mb-4">
-      <img [src]="track.coverUrl || 'assets/default-cover.png'" 
-           alt="Cover" 
+     <img [src]="getCoverUrl(track.coverUrl)" 
+      alt="Cover" 
            class="w-24 h-24 object-cover rounded mr-4">
       <div>
         <h1 class="text-2xl font-bold">{{ track.title }}</h1>
@@ -29,7 +29,6 @@
       </div>
     </div>
 
-    <!-- Lecteur audio personnalisé -->
     <div class="mt-6 bg-gray-100 p-4 rounded-lg">
       <div class="flex items-center justify-between">
         <button 
@@ -53,7 +52,7 @@
             class="w-full"
           >
           <div class="flex justify-between text-sm text-gray-500">
-            <span>{{ currentTime | time }}</span>
+            <span>{{ currentTime  }}</span>
             <span>{{ duration | time }}</span>
           </div>
         </div>

@@ -7,7 +7,7 @@ export interface Track {
     category: MusicCategory;
     addedDate: Date | string;
     fileUrl: string;
-    coverUrl: string;
+    coverUrl?: File;
     audioFile?: File;
 }
 
