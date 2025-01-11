@@ -84,7 +84,7 @@
         <span class="text-xs text-gray-400 w-12 text-right">{{ currentTime | time }}</span>
         <div class="flex-1">
           <input type="range" [value]="currentTime" [max]="duration" (input)="onSeek($event)"
-            class="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-700/100 accent-green-500 hover:accent-green-400 transition-all duration-200" />
+            class="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-700/200 accent-green-500 hover:accent-green-400 transition-all duration-200" />
         </div>
         <span class="text-xs text-gray-400 w-12">{{ duration | time }}</span>
       </div>

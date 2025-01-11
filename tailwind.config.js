@@ -4,17 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'spotify-green': '#1DB954',
-        'spotify-black': '#121212',
-        'spotify-gray': {
-          100: '#B3B3B3',
-          200: '#535353',
-          300: '#282828',
-          400: '#181818',
-          500: '#121212',
-        }
-      }
-    }
+        spotify: {
+          base: '#121212',
+          elevated: '#181818',
+          highlight: '#242424',
+          green: '#1db954',
+          'green-hover': '#1ed760',
+          text: '#b3b3b3',
+        },
+      },
+    },
   },
   plugins: [],
 };

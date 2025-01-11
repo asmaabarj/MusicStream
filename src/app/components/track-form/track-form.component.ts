@@ -33,6 +33,7 @@ export class TrackFormComponent implements OnInit {
   imageFile!: File;
   isEditMode = false;
   trackId: string | null = null;
+  showSuccessToast: boolean = false;
 
   constructor(
     private fb: FormBuilder, 
@@ -119,31 +120,30 @@ export class TrackFormComponent implements OnInit {
           alert('Track modifié avec succès!');
         } else {
           const trackId = Math.random().toString(36).substr(2, 9);
-
-          const metadata: Track=  {
+          const metadata: Track = {
             ...this.trackForm.value,
             id: trackId,
             addedDate: new Date(),
             coverUrl: '',
           };
           
-          metadata.coverUrl= this.imageFile;
-          console.log("eeeeeeeeeeeee");
-          console.log(this.imageFile);
-          
-          
-          console.log(metadata);
+          metadata.coverUrl = this.imageFile;
           
           await this.trackService.addTrackMetadata(metadata);
           await this.trackService.addTrackFile(trackId, this.audioFile);
-                      
-         alert('Track added successfully!');
+          
+          this.trackForm.reset({
+            category: MusicCategory.POP
+          });
+          this.audioFile = null as any;
+          this.imageFile = null as any;
         }
-       // this.router.navigate(['/library']);
       } catch (error) {
         console.error('Erreur:', error);
         alert('Une erreur est survenue');
       }
     }
+    this.showSuccessToast = true;
+    setTimeout(() => this.showSuccessToast = false, 3000);
   }
 }

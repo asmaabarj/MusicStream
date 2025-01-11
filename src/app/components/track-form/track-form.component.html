@@ -1,32 +1,128 @@
-<form [formGroup]="trackForm" (ngSubmit)="submit()" class="p-4">
-  <h2 class="text-2xl font-bold mb-6">{{ isEditMode ? 'Modifier' : 'Ajouter' }} une piste</h2>
-  <div>
-    <label>Title</label>
-    <input formControlName="title" class="border p-2 rounded" />
+<div class="min-h-screen rounded-xl shadow-sm shadow-green-800  relative overflow-hidden">
+  <!-- Animated Gradients -->
+  <div class="absolute inset-0">
+    <div class=""></div>
+    <div class="absolute  bottom-0 right-0 w-3/4 h-3/4 bg-gradient-to-tl from-pink-500/10 via-spotify-green/10 to-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+    <div class="absolute  inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm"></div>
+    <div class=" absolute inset-0 opacity-20"></div>
   </div>
-  <div>
-    <label>Artist</label>
-    <input formControlName="artist" class="border p-2 rounded" />
+
+  <div class="relative px-4 sm:px-6 py-12">
+    <!-- Header -->
+    <div class="max-w-6xl mx-auto mb-12 text-center">
+      <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-spotify-green via-green-400 to-blue-500 bg-clip-text text-transparent">
+        {{ isEditMode ? 'Modifier la piste' : 'Nouvelle piste' }}
+      </h1>
+      <p class="text-gray-400 text-lg">Créez quelque chose d'extraordinaire</p>
+    </div>
+
+    <!-- Form -->
+    <div class="max-w-4xl mx-auto">
+      <form [formGroup]="trackForm" (ngSubmit)="submit()" 
+            class="bg-black/40 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/5 hover:border-spotify-green/30 transition-all duration-500">
+        
+        <!-- Title & Artist Section -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <div class="group">
+            <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+              <i class="fas fa-music"></i>
+              <span>Titre</span>
+            </label>
+            <input formControlName="title" 
+                   class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10" 
+                   placeholder="Le nom de votre chef-d'œuvre" />
+          </div>
+
+          <div class="group">
+            <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+              <i class="fas fa-user"></i>
+              <span>Artiste</span>
+            </label>
+            <input formControlName="artist" 
+                   class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10" 
+                   placeholder="Votre nom d'artiste" />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-8 group">
+          <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+            <i class="fas fa-quote-left"></i>
+            <span>Description</span>
+          </label>
+          <textarea formControlName="description" 
+                    class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10 h-32 resize-none" 
+                    placeholder="Racontez l'histoire de votre musique..."></textarea>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-8 group form-group">
+          <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+            <i class="fas fa-tag"></i>
+            <span>Catégorie</span>  
+          </label>
+          <div class="relative">
+            <select formControlName="category" 
+                    class="w-full bg-spotify-highlight text-white px-4 py-3.5 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-spotify-green/50 border-0 transition-all">
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-spotify-green pointer-events-none"></i>
+          </div>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+          <!-- Audio Upload -->
+          <div class="group">
+            <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+              <i class="fas fa-headphones"></i>
+              <span>Audio</span>
+            </label>
+            <input type="file" #audioFileInput (change)="onAudioFileChange($event)" accept="audio/*" class="hidden" />
+            <button type="button" 
+                    (click)="audioFileInput.click()"
+                    class="w-full bg-gradient-to-r from-spotify-green/10 to-blue-500/10 hover:from-spotify-green/20 hover:to-blue-500/20 text-white px-4 py-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 group">
+              <i class="fas fa-cloud-upload-alt text-xl group-hover:scale-110 transition-transform"></i>
+              <span>Choisir un fichier</span>
+            </button>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="group">
+            <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
+              <i class="fas fa-image"></i>
+              <span>Cover</span>
+            </label>
+            <input type="file" #imageFileInput (change)="onImageFileChange($event)" accept="image/*" class="hidden" />
+            <button type="button" 
+                    (click)="imageFileInput.click()"
+                    class="w-full bg-gradient-to-r from-blue-500/10 to-green-500/10 hover:from-blue-500/20 hover:to-green-500/20 text-white px-4 py-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 group">
+              <i class="fas fa-cloud-upload-alt text-xl group-hover:scale-110 transition-transform"></i>
+              <span>Choisir une image</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" 
+                [disabled]="!trackForm.valid"
+                class="w-full bg-gradient-to-r from-spotify-green to-green-500 hover:from-spotify-green-hover hover:to-green-400 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 group">
+          <span class="flex items-center justify-center space-x-2">
+            <i class="fas fa-sparkles group-hover:rotate-12 transition-transform"></i>
+            <span>{{ isEditMode ? 'Sauvegarder les modifications' : 'Créer la piste' }}</span>
+          </span>
+        </button>
+      </form>
+    </div>
   </div>
-  <div>
-    <label>Description</label>
-    <textarea formControlName="description" class="border p-2 rounded"></textarea>
+
+  <!-- Toast -->
+  <div class="fixed bottom-6 right-6">
+    <div *ngIf="showSuccessToast" 
+         class="bg-gradient-to-r from-spotify-green to-blue-500 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center space-x-3 animate-fade-in-up">
+      <i class="fas fa-check-circle text-2xl"></i>
+      <span class="font-medium">Piste sauvegardée avec succès!</span>
+    </div>
   </div>
-  <div>
-    <label>Category</label>
-    <select formControlName="category" class="border p-2 rounded">
-      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-    </select>
-  </div>
-  <div>
-    <label>Audio File</label>
-    <input type="file" (change)="onAudioFileChange($event)" accept=".mp3, .wav, .ogg" />
-  </div>
-  <div>
-    <label>Track Image</label>
-    <input type="file" (change)="onImageFileChange($event)" accept=".jpg, .jpeg, .png" />
-  </div>
-  <button type="submit" class="mt-4 bg-blue-500 text-white p-2 rounded">
-    {{ isEditMode ? 'Modifier' : 'Ajouter' }} la piste
-  </button>
-</form>
+</div>
+
