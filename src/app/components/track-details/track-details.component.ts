@@ -84,6 +84,14 @@ export class TrackDetailsComponent implements OnInit {
     if (coverUrl instanceof File) {
       return URL.createObjectURL(coverUrl);
     }
+    
     return coverUrl || 'assets/default-cover.png';
+  }
+
+  skip(seconds: number) {
+    const newTime = this.audioPlayer.nativeElement.currentTime + seconds;
+    if (newTime >= 0 && newTime <= this.duration) {
+      this.audioPlayer.nativeElement.currentTime = newTime;
+    }
   }
 }
