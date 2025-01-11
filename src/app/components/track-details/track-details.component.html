@@ -40,44 +40,66 @@
       </div>
     </div>
 
-
+    <div class="flex items-center space-x-4">
+    
+    
   </div>
 </div>
 <!-- Audio Player -->
-<div class="fixed bottom-0 right-0 left-64 bg-gradient-to-r from-gray-900 to-green-900 p-5 border-t border-green-700/50 shadow-green-500 shadow-y-xl">
-  <div class="flex items-center justify-between max-w-screen-xl mx-auto space-x-6">
-    <!-- Previous Button -->
-    <button (click)="skip(-10)" class="p-4 rounded-full bg-gray-700 hover:bg-gray-600 transition duration-200 transform group hover:scale-110">
-      <i class="fas fa-backward text-gray-300 group-hover:text-white transition-colors duration-200"></i>
-    </button>
-
-    <!-- Play Button -->
-    <button (click)="togglePlay()" class="p-6 rounded-full bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 transition-all duration-300 shadow-xl transform hover:scale-110">
-      <svg *ngIf="!isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-      </svg>
-      <svg *ngIf="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
-      </svg>
-    </button>
-
-    <!-- Next Button -->
-    <button (click)="skip(10)" class="p-4 rounded-full bg-gray-700 hover:bg-gray-600 transition duration-200 transform group hover:scale-110">
-      <i class="fas fa-forward text-gray-300 group-hover:text-white transition-colors duration-200"></i>
-    </button>
-
-    <!-- Progress Bar -->
-    <div class="flex-grow mx-4">
-      <input type="range" [value]="currentTime" [max]="duration" (input)="onSeek($event)" 
-        class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-gray-700 to-gray-600 accent-green-500 hover:accent-green-400 transition-all duration-200" />
-      <div class="flex justify-between text-sm text-gray-300 mt-2 font-medium">
-        <span>{{ currentTime | time }}</span>
-        <span>{{ duration | time }}</span>
+<div class="fixed bottom-0 right-0 left-64 bg-gradient-to-r from-gray-900 via-gray-800 to-green-900 p-6 border-t border-green-700/30 backdrop-blur-lg shadow-2xl">
+  <div class="flex items-center justify-between max-w-screen-xl mx-auto">
+    <!-- Track Info (New) -->
+    <div class="flex items-center space-x-4 min-w-[200px]">
+      <img [src]="getCoverUrl(track.coverUrl)" class="w-12 h-12 rounded-lg shadow-lg" alt="Cover" />
+      <div class="hidden sm:block">
+        <p class="text-white font-medium truncate">{{ track.title }}</p>
+        <p class="text-gray-400 text-sm truncate">{{ track.artist }}</p>
       </div>
+    </div>
+
+    <!-- Controls and Progress -->
+    <div class="flex-1 max-w-2xl mx-6">
+      <!-- Buttons -->
+      <div class="flex items-center justify-center space-x-6 mb-4">
+        <button (click)="skip(-10)" class="p-2 rounded-full hover:bg-gray-700/50 transition duration-200 group">
+          <i class="fas fa-backward text-gray-300 group-hover:text-white text-lg"></i>
+        </button>
+
+        <button (click)="togglePlay()" class="p-4 rounded-full bg-green-500 hover:bg-green-400 transition-all duration-300 shadow-lg hover:shadow-green-500/50 transform hover:scale-105">
+          <svg *ngIf="!isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          </svg>
+          <svg *ngIf="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
+          </svg>
+        </button>
+
+        <button (click)="skip(10)" class="p-2 rounded-full hover:bg-gray-700/50 transition duration-200 group">
+          <i class="fas fa-forward text-gray-300 group-hover:text-white text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="flex items-center space-x-3">
+        <span class="text-xs text-gray-400 w-12 text-right">{{ currentTime | time }}</span>
+        <div class="flex-1">
+          <input type="range" [value]="currentTime" [max]="duration" (input)="onSeek($event)"
+            class="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-700/100 accent-green-500 hover:accent-green-400 transition-all duration-200" />
+        </div>
+        <span class="text-xs text-gray-400 w-12">{{ duration | time }}</span>
+      </div>
+    </div>
+
+    <!-- Volume Control -->
+    <div class="flex items-center space-x-3 min-w-[150px]">
+      <i class="fas fa-volume-down text-gray-400 w-4"></i>
+      <input type="range" min="0" max="1" step="0.1" [value]="volume" (input)="onVolumeChange($event)"
+        class="w-20 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-400 accent-green-500 hover:accent-green-400 transition-all duration-200" />
+      <i class="fas fa-volume-up text-gray-400 w-4"></i>
     </div>
   </div>
 </div>
 
 <!-- Hidden Audio Element -->
 <audio #audioPlayer [src]="audioUrl" (timeupdate)="onTimeUpdate()" (loadedmetadata)="onMetadataLoaded()" (ended)="onEnded()"></audio>
- 
+

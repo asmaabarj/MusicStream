@@ -19,6 +19,7 @@ export class TrackDetailsComponent implements OnInit {
   currentTime = 0;
   duration = 0;
   audioUrl: string | null = null;
+  volume = 1; 
 
   constructor(
     private route: ActivatedRoute,
@@ -41,6 +42,7 @@ export class TrackDetailsComponent implements OnInit {
     }
   }
 
+  
   togglePlay() {
     if (this.audioPlayer.nativeElement.paused) {
       this.audioPlayer.nativeElement.play();
@@ -51,6 +53,12 @@ export class TrackDetailsComponent implements OnInit {
     }
   }
 
+  onVolumeChange(event: Event) {
+    const volume = (event.target as HTMLInputElement).value;
+    this.volume = parseFloat(volume);
+    this.audioPlayer.nativeElement.volume = this.volume;
+  }
+  
   onTimeUpdate() {
     this.currentTime = Math.floor(this.audioPlayer.nativeElement.currentTime);
   }
