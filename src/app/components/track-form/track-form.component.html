@@ -1,13 +1,5 @@
-<div class="min-h-screen rounded-xl shadow-sm shadow-green-800  relative overflow-hidden">
-  <!-- Animated Gradients -->
-  <div class="absolute inset-0">
-    <div class=""></div>
-    <div class="absolute  bottom-0 right-0 w-3/4 h-3/4 bg-gradient-to-tl from-pink-500/10 via-spotify-green/10 to-purple-500/20 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-    <div class="absolute  inset-0 bg-[#0A0A0A]/80 backdrop-blur-sm"></div>
-    <div class=" absolute inset-0 opacity-20"></div>
-  </div>
 
-  <div class="relative px-4 sm:px-6 py-12">
+  <div class="relative px-4 sm:px-6 ">
     <!-- Header -->
     <div class="max-w-6xl mx-auto mb-12 text-center">
       <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-spotify-green via-green-400 to-blue-500 bg-clip-text text-transparent">
@@ -17,7 +9,7 @@
     </div>
 
     <!-- Form -->
-    <div class="max-w-4xl mx-auto">
+    <div class="w-full mx-auto">
       <form [formGroup]="trackForm" (ngSubmit)="submit()" 
             class="bg-black/40 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/5 hover:border-spotify-green/30 transition-all duration-500">
         
@@ -55,7 +47,7 @@
         </div>
 
         <!-- Description -->
-        <div class="group">
+        <div class="group mb-8">
           <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
             <i class="fas fa-quote-left"></i>
             <span>Description</span>
@@ -148,5 +140,4 @@
       <span class="font-medium">Piste sauvegardée avec succès!</span>
     </div>
   </div>
-</div>
 

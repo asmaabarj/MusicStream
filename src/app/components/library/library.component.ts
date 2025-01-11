@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { loadTracks } from '../../store/actions/track.actions';
 import { selectAllTracks } from '../../store/selectors/track.selectors';
 import { Track } from '../../models/track.model';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { TrackService } from '../../services/track.service';
 import Swal from 'sweetalert2';
 import { MatIconModule } from '@angular/material/icon';
@@ -18,6 +18,8 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class LibraryComponent implements OnInit {
   tracks$: Observable<Track[]> = this.store.select(selectAllTracks);
+  filteredTracks$: Observable<Track[]> = this.tracks$;
+  searchTerm: string = ''; // To hold the search query
 
   constructor(
     private store: Store,
@@ -26,8 +28,24 @@ export class LibraryComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.tracks$);
-    
     this.store.dispatch(loadTracks());
+    this.applySearch();
+  }
+
+  applySearch() {
+    this.filteredTracks$ = this.tracks$.pipe(
+      map((tracks) =>
+        tracks.filter((track) =>
+          track.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          track.artist.toLowerCase().includes(this.searchTerm.toLowerCase())
+        )
+      )
+    );
+  }
+
+  onSearchChange(event: Event) {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    this.applySearch();
   }
 
   async confirmDelete(trackId: string) {
