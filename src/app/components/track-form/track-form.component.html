@@ -30,7 +30,12 @@
             </label>
             <input formControlName="title" 
                    class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10" 
+                   [ngClass]="{'ring-2 ring-red-500': titleControl?.invalid && titleControl?.touched}"
                    placeholder="Le nom de votre chef-d'œuvre" />
+            <div class="mt-1 text-sm" *ngIf="titleControl?.touched">
+              <p class="text-red-500" *ngIf="titleControl?.errors?.['required']">Le titre est requis</p>
+              <p class="text-red-500" *ngIf="titleControl?.errors?.['maxlength']">Le titre ne doit pas dépasser 50 caractères</p>
+            </div>
           </div>
 
           <div class="group">
@@ -39,20 +44,29 @@
               <span>Artiste</span>
             </label>
             <input formControlName="artist" 
-                   class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10" 
+                   class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10"
+                   [ngClass]="{'ring-2 ring-red-500': artistControl?.invalid && artistControl?.touched}"
                    placeholder="Votre nom d'artiste" />
+            <div class="mt-1 text-sm" *ngIf="artistControl?.touched">
+              <p class="text-red-500" *ngIf="artistControl?.errors?.['required']">L'artiste est requis</p>
+              <p class="text-red-500" *ngIf="artistControl?.errors?.['minlength']">Le nom d'artiste doit contenir au moins 2 caractères</p>
+            </div>
           </div>
         </div>
 
         <!-- Description -->
-        <div class="mb-8 group">
+        <div class="group">
           <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
             <i class="fas fa-quote-left"></i>
             <span>Description</span>
           </label>
           <textarea formControlName="description" 
-                    class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10 h-32 resize-none" 
+                    class="w-full bg-white/5 text-white px-4 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-spotify-green border-0 placeholder-gray-500 transition-all hover:bg-white/10 h-32 resize-none"
+                    [ngClass]="{'ring-2 ring-red-500': descriptionControl?.invalid && descriptionControl?.touched}"
                     placeholder="Racontez l'histoire de votre musique..."></textarea>
+          <div class="mt-1 text-sm">
+            <p class="text-red-500" *ngIf="descriptionControl?.errors?.['maxlength']">La description ne doit pas dépasser 200 caractères</p>
+          </div>
         </div>
 
         <!-- Category -->
@@ -78,12 +92,17 @@
               <i class="fas fa-headphones"></i>
               <span>Audio</span>
             </label>
-            <input type="file" #audioFileInput (change)="onAudioFileChange($event)" accept="audio/*" class="hidden" />
+            <input type="file" 
+                   #audioFileInput 
+                   id="audioFileInput"
+                   (change)="onAudioFileChange($event)" 
+                   accept="audio/*" 
+                   class="hidden" />
             <button type="button" 
                     (click)="audioFileInput.click()"
                     class="w-full bg-gradient-to-r from-spotify-green/10 to-blue-500/10 hover:from-spotify-green/20 hover:to-blue-500/20 text-white px-4 py-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 group">
               <i class="fas fa-cloud-upload-alt text-xl group-hover:scale-110 transition-transform"></i>
-              <span>Choisir un fichier</span>
+              <span>{{ audioFileName || 'Choisir un fichier' }}</span>
             </button>
           </div>
 
@@ -91,22 +110,27 @@
           <div class="group">
             <label class="inline-flex items-center space-x-2 text-gray-300 text-sm font-medium mb-2 group-hover:text-spotify-green transition-colors">
               <i class="fas fa-image"></i>
-              <span>Cover</span>
+              <span>Cover ( optionnel )</span>
             </label>
-            <input type="file" #imageFileInput (change)="onImageFileChange($event)" accept="image/*" class="hidden" />
+            <input type="file" 
+                   #imageFileInput 
+                   id="imageFileInput"
+                   (change)="onImageFileChange($event)" 
+                   accept="image/*" 
+                   class="hidden" />
             <button type="button" 
                     (click)="imageFileInput.click()"
                     class="w-full bg-gradient-to-r from-blue-500/10 to-green-500/10 hover:from-blue-500/20 hover:to-green-500/20 text-white px-4 py-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 group">
               <i class="fas fa-cloud-upload-alt text-xl group-hover:scale-110 transition-transform"></i>
-              <span>Choisir une image</span>
+              <span>{{ imageFileName || 'Choisir une image' }}</span>
             </button>
           </div>
         </div>
 
         <!-- Submit Button -->
         <button type="submit" 
-                [disabled]="!trackForm.valid"
-                class="w-full bg-gradient-to-r from-spotify-green to-green-500 hover:from-spotify-green-hover hover:to-green-400 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 group">
+        [disabled]="!isFormValid"
+        class="w-full bg-gradient-to-r from-spotify-green to-green-500 hover:from-spotify-green-hover hover:to-green-400 text-white font-bold py-4 rounded-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed group">
           <span class="flex items-center justify-center space-x-2">
             <i class="fas fa-sparkles group-hover:rotate-12 transition-transform"></i>
             <span>{{ isEditMode ? 'Sauvegarder les modifications' : 'Créer la piste' }}</span>

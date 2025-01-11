@@ -34,6 +34,8 @@ export class TrackFormComponent implements OnInit {
   isEditMode = false;
   trackId: string | null = null;
   showSuccessToast: boolean = false;
+  audioFileName: string = '';
+  imageFileName: string = '';
 
   constructor(
     private fb: FormBuilder, 
@@ -44,11 +46,31 @@ export class TrackFormComponent implements OnInit {
     this.initForm();
   }
 
+  get titleControl() {
+    return this.trackForm.get('title');
+  }
+
+  get artistControl() {
+    return this.trackForm.get('artist');
+  }
+
+  get descriptionControl() {
+    return this.trackForm.get('description');
+  }
+
   private initForm() {
     this.trackForm = this.fb.group({
-      title: ['', [Validators.required, Validators.maxLength(50)]],
-      artist: ['', Validators.required],
-      description: ['', Validators.maxLength(200)],
+      title: ['', [
+        Validators.required, 
+        Validators.maxLength(50)
+      ]],
+      artist: ['', [
+        Validators.required,
+        Validators.maxLength(50)
+      ]],
+      description: ['', [
+        Validators.maxLength(200)
+      ]],
       category: [MusicCategory.POP, Validators.required],
     });
   }
@@ -81,6 +103,7 @@ export class TrackFormComponent implements OnInit {
     const file = event.target.files[0];
     if (file && this.validateFile(file, ['audio/mpeg', 'audio/wav', 'audio/ogg'], 15)) {
       this.audioFile = file;
+      this.audioFileName = file.name;
     } else {
       alert('Invalid audio file. Please upload a valid MP3, WAV, or OGG file under 15MB.');
     }
@@ -90,6 +113,7 @@ export class TrackFormComponent implements OnInit {
     const file = event.target.files[0];
     if (file && this.validateFile(file, ['image/jpeg', 'image/png'], 5)) {
       this.imageFile = file;
+      this.imageFileName = file.name;
     } else {
       alert('Invalid image file. Please upload a valid JPEG or PNG file under 5MB.');
     }
@@ -113,11 +137,8 @@ export class TrackFormComponent implements OnInit {
             await this.trackService.addTrackFile(this.trackId, this.audioFile);
           }
           if (this.imageFile) {
-            const coverUrl = URL.createObjectURL(this.imageFile);
-
             await this.trackService.addTrackCover(this.trackId, this.imageFile);
           }
-          alert('Track modifié avec succès!');
         } else {
           const trackId = Math.random().toString(36).substr(2, 9);
           const metadata: Track = {
@@ -127,7 +148,9 @@ export class TrackFormComponent implements OnInit {
             coverUrl: '',
           };
           
-          metadata.coverUrl = this.imageFile;
+          if (this.imageFile) {
+            metadata.coverUrl = this.imageFile;
+          }
           
           await this.trackService.addTrackMetadata(metadata);
           await this.trackService.addTrackFile(trackId, this.audioFile);
@@ -137,6 +160,13 @@ export class TrackFormComponent implements OnInit {
           });
           this.audioFile = null as any;
           this.imageFile = null as any;
+          this.audioFileName = '';
+          this.imageFileName = '';
+          
+          const audioInput = document.querySelector('#audioFileInput') as HTMLInputElement;
+          const imageInput = document.querySelector('#imageFileInput') as HTMLInputElement;
+          if (audioInput) audioInput.value = '';
+          if (imageInput) imageInput.value = '';
         }
       } catch (error) {
         console.error('Erreur:', error);
@@ -144,6 +174,11 @@ export class TrackFormComponent implements OnInit {
       }
     }
     this.showSuccessToast = true;
-    setTimeout(() => this.showSuccessToast = false, 3000);
+    setTimeout(() => this.showSuccessToast = false, 3000); 
   }
+
+  get isFormValid(): boolean {
+    return this.trackForm.valid && (this.isEditMode || !!this.audioFile);
+  }
+  
 }
