@@ -5,6 +5,10 @@ import { Observable, from } from 'rxjs';
 import { Track } from '../../models/track.model';
 import { TrackService } from '../../services/track.service';
 import { TimePipe } from '../../pipes/time.pipe';
+import { Store } from '@ngrx/store';
+import * as PlayerActions from '../../store/actions/player.actions';
+import * as PlayerSelectors from '../../store/selectors/player.selectors';
+import { PlayerStatus } from '../../models/player-state.model';
 
 @Component({
   selector: 'app-track-details',
@@ -14,16 +18,21 @@ import { TimePipe } from '../../pipes/time.pipe';
 })
 export class TrackDetailsComponent implements OnInit {
   @ViewChild('audioPlayer') audioPlayer!: ElementRef<HTMLAudioElement>;
+  audioUrl: string | undefined;
   track$!: Observable<Track>;
-  isPlaying = false;
-  currentTime = 0;
-  duration = 0;
-  audioUrl: string | null = null;
-  volume = 1; 
+  playerStatus$ = this.store.select(PlayerSelectors.selectPlayerStatus);
+  currentTime$ = this.store.select(PlayerSelectors.selectCurrentTime);
+  duration$ = this.store.select(PlayerSelectors.selectDuration);
+  volume$ = this.store.select(PlayerSelectors.selectVolume);
+  error$ = this.store.select(PlayerSelectors.selectError);
+  readonly PAUSED = PlayerStatus.PAUSED;
+  readonly STOPPED = PlayerStatus.STOPPED;
+  readonly PLAYING = PlayerStatus.PLAYING;
 
   constructor(
     private route: ActivatedRoute,
-    private trackService: TrackService
+    private trackService: TrackService,
+    private store: Store
   ) {}
 
   ngOnInit() {
@@ -42,50 +51,41 @@ export class TrackDetailsComponent implements OnInit {
     }
   }
 
-  
   togglePlay() {
-    if (this.audioPlayer.nativeElement.paused) {
-      this.audioPlayer.nativeElement.play();
-      this.isPlaying = true;
+    const audio = this.audioPlayer.nativeElement;
+    if (audio.paused) {
+      this.store.dispatch(PlayerActions.play({ trackId: this.route.snapshot.paramMap.get('id')! }));
+      audio.play();
     } else {
-      this.audioPlayer.nativeElement.pause();
-      this.isPlaying = false;
+      this.store.dispatch(PlayerActions.pause());
+      audio.pause();
     }
+  }
+
+  onTimeUpdate() {
+    const currentTime = Math.floor(this.audioPlayer.nativeElement.currentTime);
+    this.store.dispatch(PlayerActions.setCurrentTime({ time: currentTime }));
+  }
+
+  onMetadataLoaded() {
+    const duration = Math.floor(this.audioPlayer.nativeElement.duration);
+    this.store.dispatch(PlayerActions.setDuration({ duration }));
   }
 
   onVolumeChange(event: Event) {
-    const volume = (event.target as HTMLInputElement).value;
-    this.volume = parseFloat(volume);
-    this.audioPlayer.nativeElement.volume = this.volume;
-  }
-  
-  onTimeUpdate() {
-    this.currentTime = Math.floor(this.audioPlayer.nativeElement.currentTime);
-  }
-
-  async onMetadataLoaded() {
-    this.duration = Math.floor(this.audioPlayer.nativeElement.duration);
-    
-    const trackId = this.route.snapshot.paramMap.get('id');
-    if (trackId) {
-      try {
-        const track = await this.trackService.getTrackById(trackId);
-        track.duration = this.duration;
-        await this.trackService.updateTrack(track);
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour de la durée:', error);
-      }
-    }
+    const volume = parseFloat((event.target as HTMLInputElement).value);
+    this.store.dispatch(PlayerActions.setVolume({ volume }));
+    this.audioPlayer.nativeElement.volume = volume;
   }
 
   onSeek(event: Event) {
-    const time = (event.target as HTMLInputElement).value;
-    this.audioPlayer.nativeElement.currentTime = Number(time);
+    const time = parseFloat((event.target as HTMLInputElement).value);
+    this.audioPlayer.nativeElement.currentTime = time;
+    this.store.dispatch(PlayerActions.setCurrentTime({ time }));
   }
 
   onEnded() {
-    this.isPlaying = false;
-    this.currentTime = 0;
+    this.store.dispatch(PlayerActions.stop());
   }
 
   getCoverUrl(coverUrl: any): string {
@@ -98,8 +98,11 @@ export class TrackDetailsComponent implements OnInit {
 
   skip(seconds: number) {
     const newTime = this.audioPlayer.nativeElement.currentTime + seconds;
-    if (newTime >= 0 && newTime <= this.duration) {
-      this.audioPlayer.nativeElement.currentTime = newTime;
-    }
+    this.store.select(PlayerSelectors.selectDuration).subscribe(duration => {
+      if (newTime >= 0 && newTime <= duration) {
+        this.audioPlayer.nativeElement.currentTime = newTime;
+        this.store.dispatch(PlayerActions.setCurrentTime({ time: newTime }));
+      }
+    }).unsubscribe();
   }
 }

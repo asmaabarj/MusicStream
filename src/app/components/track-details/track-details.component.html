@@ -36,7 +36,7 @@
       <div class="text-center">
         <i class="fas fa-clock text-gray-400 text-lg"></i>
         <p class="text-gray-400 uppercase tracking-wide">Durée</p>
-        <p class="font-medium text-gray-200">{{ duration | time }} min</p>
+        <span class="font-medium text-gray-200">{{ (duration$ | async) ?? 0 | time }}</span>
       </div>
     </div>
 
@@ -66,12 +66,28 @@
         </button>
 
         <button (click)="togglePlay()" class="p-4 rounded-full bg-green-500 hover:bg-green-400 transition-all duration-300 shadow-lg hover:shadow-green-500/50 transform hover:scale-105">
-          <svg *ngIf="!isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-          </svg>
-          <svg *ngIf="isPlaying" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
-          </svg>
+          <ng-container [ngSwitch]="playerStatus$ | async">
+            <!-- Play icon -->
+            <svg *ngSwitchCase="PAUSED" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            </svg>
+            <svg *ngSwitchCase="STOPPED" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+            </svg>
+            <!-- Pause icon -->
+            <svg *ngSwitchCase="'playing'" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6" />
+            </svg>
+            <!-- Loading spinner -->
+            <svg *ngSwitchCase="'LOADING'" class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <svg *ngSwitchCase="'BUFFERING'" class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </ng-container>
         </button>
 
         <button (click)="skip(10)" class="p-2 rounded-full hover:bg-gray-700/50 transition duration-200 group">
@@ -81,19 +97,19 @@
 
       <!-- Progress Bar -->
       <div class="flex items-center space-x-3">
-        <span class="text-xs text-gray-400 w-12 text-right">{{ currentTime | time }}</span>
+        <span class="text-xs text-gray-400 w-12 text-right">{{ (currentTime$ | async) ?? 0 | time }}</span>
         <div class="flex-1">
-          <input type="range" [value]="currentTime" [max]="duration" (input)="onSeek($event)"
+          <input type="range" [value]="(currentTime$ | async) ?? 0" [max]="(duration$ | async) ?? 0" (input)="onSeek($event)"
             class="w-full h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-700/200 accent-green-500 hover:accent-green-400 transition-all duration-200" />
         </div>
-        <span class="text-xs text-gray-400 w-12">{{ duration | time }}</span>
+        <span class="text-xs text-gray-400 w-12">{{ (duration$ | async) ?? 0 | time }}</span>
       </div>
     </div>
 
     <!-- Volume Control -->
     <div class="flex items-center space-x-3 min-w-[150px]">
       <i class="fas fa-volume-down text-gray-400 w-4"></i>
-      <input type="range" min="0" max="1" step="0.1" [value]="volume" (input)="onVolumeChange($event)"
+      <input type="range" min="0" max="1" step="0.1" [value]="volume$ | async" (input)="onVolumeChange($event)"
         class="w-20 h-1.5 rounded-lg appearance-none cursor-pointer bg-gray-400 accent-green-500 hover:accent-green-400 transition-all duration-200" />
       <i class="fas fa-volume-up text-gray-400 w-4"></i>
     </div>
@@ -102,4 +118,33 @@
 
 <!-- Hidden Audio Element -->
 <audio #audioPlayer [src]="audioUrl" (timeupdate)="onTimeUpdate()" (loadedmetadata)="onMetadataLoaded()" (ended)="onEnded()"></audio>
+
+<!-- Error Alert -->
+<div *ngIf="(error$ | async) as error" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
+  <div class="flex items-center space-x-2">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ error }}</span>
+  </div>
+</div>
+
+<!-- Status Indicator -->
+<div class="text-sm text-gray-400 mt-2">
+  <ng-container [ngSwitch]="playerStatus$ | async">
+    <span *ngSwitchCase="'PLAYING'" class="text-green-400">
+      <i class="fas fa-play mr-1"></i> Lecture en cours
+    </span>
+    <span *ngSwitchCase="'PAUSED'" class="text-yellow-400">
+      <i class="fas fa-pause mr-1"></i> En pause
+    </span>
+    <span *ngSwitchCase="'LOADING'" class="text-blue-400">
+      <i class="fas fa-spinner fa-spin mr-1"></i> Chargement...
+    </span>
+    <span *ngSwitchCase="'BUFFERING'" class="text-blue-400">
+      <i class="fas fa-spinner fa-spin mr-1"></i> Mise en mémoire tampon...
+    </span>
+    <span *ngSwitchCase="'ERROR'" class="text-red-400">
+      <i class="fas fa-exclamation-circle mr-1"></i> Erreur de lecture
+    </span>
+  </ng-container>
+</div>
 
