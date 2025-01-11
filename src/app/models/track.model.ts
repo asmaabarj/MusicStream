@@ -17,7 +17,8 @@ export enum MusicCategory {
     RAP = 'rap',
     CHAABI = 'cha3bi',
     JAZZ = 'jazz',
-    CLASSIQUE = 'classique',    
+    CLASSIQUE = 'classique',
+    RAI = 'rai',
     OTHER = 'other',
 }
   

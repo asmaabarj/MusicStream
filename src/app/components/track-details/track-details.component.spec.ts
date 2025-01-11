@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { TrackDetailsComponent } from './track-details.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 
 describe('TrackDetailsComponent', () => {
   let component: TrackDetailsComponent;
@@ -8,16 +9,19 @@ describe('TrackDetailsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TrackDetailsComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(TrackDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+      imports: [RouterTestingModule],
+      providers: [
+        provideMockStore({ initialState: {} })
+      ]
+    }).compileComponents();
   });
 
-  it('should create', () => {
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TrackDetailsComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('devrait être créé', () => {
     expect(component).toBeTruthy();
   });
 });
