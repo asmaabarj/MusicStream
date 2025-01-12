@@ -1,17 +1,13 @@
 version: '3.8'
 
 services:
-  angular-app:
-    build: .
+  musicstream:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: musicstream-app
     ports:
-      - "8080:80"
+      - "4200:4200"
     environment:
       - NODE_ENV=production
-    volumes:
-      - .:/app
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    restart: unless-stopped 
